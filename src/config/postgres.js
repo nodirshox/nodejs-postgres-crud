@@ -1,6 +1,8 @@
 // Postgress
 const { Pool } = require("pg");
 
+//const connectionURL = `postgresql://${cfg.user}:${cfg.password}@${cfg.host}:${cfg.port}/${cfg.database}`;
+
 const pool = new Pool({
     user: "postgres",
     host: "localhost",
@@ -9,11 +11,7 @@ const pool = new Pool({
     port: 5432
 });
 
-pool.on("connect", (err, res) => {
-    if (err) {
-        throw new Error(err.message);
-    }
-
+pool.on("connect", () => {
     console.log("Connected to Postgres");
 });
 
