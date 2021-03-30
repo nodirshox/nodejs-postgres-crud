@@ -2,11 +2,11 @@ const db = require("../../config/postgres");
 
 let contactStorage = {
     create: async (req, res) => {
-        let newContact = req.body;
+        let contact = req.body;
         try {
             let newContact = await db.query(
                 "INSERT INTO contacts (first_name, last_name, email, phone) VALUES ($1, $2, $3, $4) RETURNING id",
-                [newContact.first_name, newContact.last_name, newContact.email, newContact.phone]
+                [contact.first_name, contact.last_name, contact.email, contact.phone]
             )
 
             return res.status(200).send({
@@ -37,6 +37,32 @@ let contactStorage = {
             return res.status(200).json({
                 contact: contact.rows[0]
             })
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+    update: async (req, res) => {
+        try {
+            let contact = await db.query(
+                "UPDATE contacts SET first_name = $1, last_name = $2, email = $3, phone = $4 WHERE id = $5",
+                [req.body.first_name, req.body.last_name, req.body.email, req.body.phone, req.params.contact_id]
+            )
+            return res.status(200).json({
+                success: true
+            })
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    },
+    delete: async (req, res) => {
+        try {
+            let deleteContact = await db.query(
+                "DELETE FROM contacts WHERE id = $1",
+                [req.params.contact_id]
+            )
+            return res.status(200).json({
+                success: true
+            });
         } catch (error) {
             throw new Error(error.message);
         }
